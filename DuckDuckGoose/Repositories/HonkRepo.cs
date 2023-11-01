@@ -58,6 +58,8 @@ public class HonkRepo : IHonkRepo
 
         var addedEntity = _context.Honks.Add(newHonk);
 
+        _context.SaveChanges();
+
         return addedEntity.Entity;
     }
 }
