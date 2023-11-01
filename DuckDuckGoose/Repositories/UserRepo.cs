@@ -8,6 +8,7 @@ namespace DuckDuckGoose.Repositories;
 public interface IUserRepo
 {
     public Pagination<DuckDuckGooseUser> GetUsers(GetUsersRequest request);
+    public DuckDuckGooseUser GetUserById(string id);
 }
 
 public class UserRepo : IUserRepo
@@ -32,5 +33,20 @@ public class UserRepo : IUserRepo
     
 
         return Pagination<DuckDuckGooseUser>.Paginate(filteredUsers, request.PageNumber.HasValue ? request.PageNumber.Value : 1, 5);
+    }
+
+    public DuckDuckGooseUser GetUserById(string id)
+    {
+        try
+        {
+            return _context.Users
+                .Include(u => u.Honks)
+                .Include(u => u.Followers)
+                .Single(u => u.Id == id);
+        }
+        catch (InvalidOperationException e)
+        {
+            throw new ArgumentOutOfRangeException($"A user was not found with id {id}", e);
+        }
     }
 }

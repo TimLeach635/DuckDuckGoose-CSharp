@@ -1,4 +1,4 @@
-﻿using DuckDuckGoose.Models;
+using DuckDuckGoose.Models;
 using DuckDuckGoose.Models.Requests;
 using DuckDuckGoose.Models.ViewModels;
 using DuckDuckGoose.Repositories;
@@ -41,5 +41,22 @@ public class UserController : Controller
             Search = request.Search,
         };
         return View(viewModel);
+    }
+
+    [HttpGet("{userId}")]
+    public IActionResult UserPage([FromRoute] string userId, [FromQuery] int? page)
+    {
+        UserViewModel user;
+        
+        try
+        {
+            user = new UserViewModel(_users.GetUserById(userId), page.HasValue ? page.Value : 1, 5);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            return NotFound();
+        }
+        
+        return View(user);
     }
 }
